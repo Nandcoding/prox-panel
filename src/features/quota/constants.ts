@@ -47,7 +47,7 @@ export type DrainRangeHours = (typeof DRAIN_RANGE_HOURS)[number];
 export const FORECAST_ACCENTS: Record<QuotaProviderType, string> = {
   claude: '#e07b5f',
   antigravity: '#5b8def',
-  codex: '#8f8cf7',
+  codex: '#7aa5f8',
   xai: '#d4d4d8',
   kimi: '#4f9cff',
   devin: '#3ecf8e',

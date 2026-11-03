@@ -26,7 +26,13 @@ import { ProviderTabs } from '@/features/authFiles/components/ProviderTabs';
 import { QuotaHeader } from './components/QuotaHeader';
 import { QuotaCard } from './components/QuotaCard';
 import { QuotaTimeline } from './components/QuotaTimeline';
-import { QuotaForecast } from './components/QuotaForecast';
+import {
+  ProxPoolPanel,
+  type ProxBurnHours,
+  type ProxChartMode,
+  type ProxFutureUsage,
+} from './components/ProxPoolPanel';
+import { ProxQuotaControls } from './components/ProxQuotaControls';
 import { QuotaLedger } from './components/QuotaLedger';
 import {
   CARD_ENTRANCE_BUDGET_MS,
@@ -75,9 +81,13 @@ const SKELETON_CARD_COUNT = 6;
 const FILES_POLL_MS = 2 * 60_000;
 /** Slower re-read while the tab is in the background (browsers throttle timers anyway). */
 const FILES_POLL_HIDDEN_MS = 5 * 60_000;
-/** Chart heights: one provider gets room; All stacks several compact ones. */
-const PROVIDER_TAB_CHART_HEIGHT = 160;
-const ALL_TAB_CHART_HEIGHT = 112;
+/** Height of a pool card while its data loads. */
+const POOL_SKELETON_HEIGHT = 520;
+/** The pool chart shows two weeks: three days back, the rest ahead. */
+const RANGE_DAYS = 14;
+const RANGE_PAST_DAYS = 3;
+/** Each step of the range arrows moves it a week. */
+const RANGE_STEP_DAYS = 7;
 
 export function QuotaPage() {
   const { t } = useTranslation();
@@ -99,6 +109,11 @@ export function QuotaPage() {
   }, []);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [chartMode, setChartMode] = useState<ProxChartMode>('remaining');
+  const [burnHours, setBurnHours] = useState<ProxBurnHours>(3);
+  const [futureUsage, setFutureUsage] = useState<ProxFutureUsage>('same');
+  const [showAccounts, setShowAccounts] = useState(false);
+  const [rangeOffset, setRangeOffset] = useState(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
   // 页头 + tabs 的入场级联（标题 → meta → 动作 → tabs，级差 70ms）
   const revealRef = useRevealGroup<HTMLDivElement>();
@@ -376,6 +391,18 @@ export function QuotaPage() {
 
   // Recorded history for every provider with credentials, shared by the
   // forecast panels, ledger rows and cards (one rate rule everywhere).
+  const rangeStartMs = useMemo(() => {
+    const start = new Date(clockNow - RANGE_PAST_DAYS * DAY_MS);
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() + rangeOffset * RANGE_STEP_DAYS);
+    return start.getTime();
+  }, [clockNow, rangeOffset]);
+  const rangeEndMs = useMemo(() => {
+    const end = new Date(rangeStartMs);
+    end.setDate(end.getDate() + RANGE_DAYS);
+    return end.getTime();
+  }, [rangeStartMs]);
+
   const {
     historyFor,
     snapshotsFor,
@@ -383,7 +410,10 @@ export function QuotaPage() {
   } = useQuotaHistory(
     connection,
     providersWithCredentials,
-    clockNow - Math.max(7 * DAY_MS, preferences.forecastLookbackHours * HOUR_MS),
+    Math.min(
+      rangeStartMs,
+      clockNow - Math.max(7 * DAY_MS, preferences.forecastLookbackHours * HOUR_MS)
+    ),
     historyRevision + seedRevision
   );
 
@@ -401,12 +431,6 @@ export function QuotaPage() {
     updatePreferences(
       tab === 'all' ? { allViewMode: next as QuotaViewMode } : { viewMode: next as QuotaViewMode }
     );
-  const toggleForecast = (provider: QuotaProviderType, collapsed: boolean) =>
-    updatePreferences({
-      collapsedForecasts: collapsed
-        ? [...preferences.collapsedForecasts.filter((id) => id !== provider), provider]
-        : preferences.collapsedForecasts.filter((id) => id !== provider),
-    });
   const providerCounts = useMemo(() => {
     const counts: Partial<Record<QuotaProviderType, number>> = {};
     sortedEntries.forEach((entry) => {
@@ -592,17 +616,29 @@ export function QuotaPage() {
               />
             </div>
 
+            {forecastGroups.length > 0 && (
+              <ProxQuotaControls
+                chartMode={chartMode}
+                burnHours={burnHours}
+                futureUsage={futureUsage}
+                showAccounts={showAccounts}
+                rangeStartMs={rangeStartMs}
+                rangeEndMs={rangeEndMs}
+                isToday={rangeOffset === 0}
+                onChartModeChange={setChartMode}
+                onBurnHoursChange={setBurnHours}
+                onFutureUsageChange={setFutureUsage}
+                onShowAccountsChange={setShowAccounts}
+                onShiftRange={(direction) => setRangeOffset((offset) => offset + direction)}
+                onToday={() => setRangeOffset(0)}
+              />
+            )}
+
             {/* A placeholder until cached quota and recorded history are both in. */}
             {!loading && (!hydrated || !historyLoaded) && forecastGroups.length > 0 && (
               <div className={styles.forecasts} aria-busy="true">
                 {forecastGroups.map((group) => (
-                  <Skeleton
-                    key={group.provider}
-                    height={
-                      tab === 'all' ? ALL_TAB_CHART_HEIGHT + 40 : PROVIDER_TAB_CHART_HEIGHT + 150
-                    }
-                    rounded={14}
-                  />
+                  <Skeleton key={group.provider} height={POOL_SKELETON_HEIGHT} rounded={16} />
                 ))}
               </div>
             )}
@@ -610,7 +646,7 @@ export function QuotaPage() {
             {!loading && hydrated && historyLoaded && forecastGroups.length > 0 && (
               <div className={styles.forecasts}>
                 {forecastGroups.map((group) => (
-                  <QuotaForecast
+                  <ProxPoolPanel
                     key={group.provider}
                     provider={group.provider}
                     entries={group.entries}
@@ -619,14 +655,12 @@ export function QuotaPage() {
                     snapshotsFor={snapshotsFor}
                     nowMs={clockNow}
                     resolvedTheme={resolvedTheme}
-                    layout={tab === 'all' ? 'split' : 'stacked'}
-                    chartHeight={tab === 'all' ? ALL_TAB_CHART_HEIGHT : PROVIDER_TAB_CHART_HEIGHT}
-                    lookbackHours={preferences.forecastLookbackHours}
-                    collapsed={preferences.collapsedForecasts.includes(group.provider)}
-                    onLookbackHoursChange={(forecastLookbackHours) =>
-                      updatePreferences({ forecastLookbackHours })
-                    }
-                    onCollapsedChange={(collapsed) => toggleForecast(group.provider, collapsed)}
+                    chartMode={chartMode}
+                    burnHours={burnHours}
+                    futureUsage={futureUsage}
+                    showAccounts={showAccounts}
+                    rangeStartMs={rangeStartMs}
+                    rangeEndMs={rangeEndMs}
                   />
                 ))}
               </div>

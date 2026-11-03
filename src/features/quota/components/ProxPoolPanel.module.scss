@@ -1,0 +1,276 @@
+/* ============================================================
+ * prox pool card: title, pooled total with four facts, a two-week
+ * recorded + projected chart and its legend. Accent comes from the
+ * provider through --prox-accent.
+ * ============================================================ */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 26px 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--bg-secondary);
+}
+
+.panelEmpty {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+}
+
+.empty {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.provider {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- title + summary ---------- */
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.providerName {
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.accounts {
+  color: var(--text-tertiary);
+  font-size: 14px;
+}
+
+.summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.totals {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+}
+
+.bigNumber {
+  color: var(--text-primary);
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.capacity {
+  color: var(--text-tertiary);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 4px 44px;
+  margin: 0;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+
+  dt {
+    color: var(--text-tertiary);
+    font-size: 14px;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.firstEmpty {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.accountName {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+/* ---------- chart ---------- */
+
+.chart {
+  position: relative;
+  width: 100%;
+
+  svg {
+    display: block;
+    overflow: visible;
+  }
+}
+
+.gridLine {
+  stroke: var(--border-color);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+
+.baseLine {
+  stroke: var(--border-color);
+  stroke-width: 1;
+}
+
+.dayLine {
+  stroke: var(--border-color);
+  stroke-width: 1;
+  opacity: 0.35;
+}
+
+.axisLabel {
+  fill: var(--text-tertiary);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.recordedLine {
+  fill: none;
+  stroke: var(--prox-accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.projectedLine {
+  fill: none;
+  stroke: var(--prox-accent);
+  stroke-width: 2;
+  stroke-dasharray: 7 5;
+  stroke-linejoin: round;
+}
+
+.accountLines path {
+  fill: none;
+  stroke: var(--prox-accent);
+  stroke-width: 1;
+  opacity: 0.35;
+}
+
+.accountProjected {
+  stroke-dasharray: 3 4;
+}
+
+.jumpLabel {
+  fill: var(--text-secondary);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.nowLine {
+  stroke: var(--text-tertiary);
+  stroke-width: 1;
+}
+
+.nowLabel {
+  fill: var(--text-secondary);
+  font-size: 13px;
+}
+
+.nowDot {
+  fill: var(--prox-accent);
+  stroke: var(--bg-secondary);
+  stroke-width: 2;
+}
+
+.hoverLine {
+  stroke: var(--text-tertiary);
+  stroke-width: 1;
+}
+
+.hoverDot {
+  fill: var(--prox-accent);
+  stroke: var(--bg-secondary);
+  stroke-width: 2;
+}
+
+.readout {
+  position: absolute;
+  top: 0;
+  right: 12px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+/* ---------- legend ---------- */
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.legendTitle {
+  color: var(--text-secondary);
+  margin-right: 60px;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legendSolid,
+.legendDashed {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  border-top: 2px solid var(--prox-accent);
+}
+
+.legendDashed {
+  border-top-style: dashed;
+}
+
+@media (max-width: 900px) {
+  .facts {
+    grid-template-columns: repeat(2, auto);
+  }
+
+  .fact {
+    text-align: left;
+  }
+}

@@ -1016,3 +1016,19 @@
     }
   }
 }
+
+/* prox: wordmark brand and heading-free nav groups separated by space. */
+.sidebar .prox-brand-title {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sidebar .prox-logo {
+  border-radius: 9px;
+}
+
+.sidebar .prox-nav {
+  gap: 22px;
+  padding-top: 8px;
+}

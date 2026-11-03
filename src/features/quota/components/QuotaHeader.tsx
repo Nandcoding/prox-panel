@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { IconRefreshCw } from '@/components/ui/icons';
+import { IconEye, IconEyeOff, IconRefreshCw } from '@/components/ui/icons';
 import { useCountUp } from '@/hooks/motion';
 import { QUOTA_DISPLAY_MODES, type QuotaDisplayMode } from '../meterDisplay';
 import styles from './QuotaHeader.module.scss';
@@ -70,29 +70,38 @@ export function QuotaHeader(props: QuotaHeaderProps) {
         </p>
       </div>
       <div className={styles.actions} data-reveal>
-        <div
-          className={styles.segmented}
-          role="group"
-          aria-label={t('quota_management.display_label')}
-        >
-          {QUOTA_DISPLAY_MODES.map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              className={`${styles.segment} ${mode === displayMode ? styles.segmentActive : ''}`}
-              aria-pressed={mode === displayMode}
-              onClick={() => onDisplayModeChange(mode)}
-            >
-              {t(`quota_management.display_${mode}`)}
-            </button>
-          ))}
-        </div>
+        {/* prox keeps the pool in "remaining" terms; the used view stays reachable
+            only when it was already chosen, so it can be switched back. */}
+        {displayMode !== 'remaining' && (
+          <div
+            className={styles.segmented}
+            role="group"
+            aria-label={t('quota_management.display_label')}
+          >
+            {QUOTA_DISPLAY_MODES.map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                className={`${styles.segment} ${mode === displayMode ? styles.segmentActive : ''}`}
+                aria-pressed={mode === displayMode}
+                onClick={() => onDisplayModeChange(mode)}
+              >
+                {t(`quota_management.display_${mode}`)}
+              </button>
+            ))}
+          </div>
+        )}
         <button
           type="button"
           className={styles.secondaryAction}
           onClick={onToggleEmails}
           aria-pressed={showEmails}
         >
+          {showEmails ? (
+            <IconEyeOff size={16} className={styles.eyeIcon} />
+          ) : (
+            <IconEye size={16} className={styles.eyeIcon} />
+          )}
           {t(showEmails ? 'quota_management.hide_emails' : 'quota_management.show_emails')}
         </button>
         <button

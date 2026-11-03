@@ -1,0 +1,115 @@
+.controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.labelled {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 8px;
+}
+
+.label {
+  color: var(--text-tertiary);
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--bg-secondary);
+
+  button {
+    height: 34px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-hover) var(--ease-out-strong),
+      color var(--dur-hover) var(--ease-out-strong);
+
+    &:hover {
+      color: var(--text-primary);
+    }
+  }
+
+  .active {
+    background: var(--bg-tertiary, var(--bg-hover));
+    color: var(--text-primary);
+  }
+}
+
+.select {
+  min-width: 140px;
+}
+
+.pill {
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.pillActive {
+  background: var(--bg-tertiary, var(--bg-hover));
+  color: var(--text-primary);
+}
+
+.range {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.rangeText {
+  color: var(--text-tertiary);
+  font-size: 15px;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+  }
+}
+
+.arrowNext svg {
+  transform: rotate(180deg);
+}

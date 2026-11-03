@@ -5,16 +5,18 @@
 
 .header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 16px 24px;
   flex-wrap: wrap;
 }
 
+/* prox: title and counts on one line. */
 .copy {
   display: flex;
-  flex-direction: column;
-  gap: 7px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 20px;
   min-width: 0;
 }
 
@@ -33,35 +35,28 @@
   align-items: baseline;
   flex-wrap: wrap;
   gap: 4px 8px;
-  font-family: $font-mono;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-  color: var(--text-secondary);
-
-  /* 终端游标：结构记号，与凭证库 meta 行同语汇 */
-  &::before {
-    content: '▍';
-    color: var(--viz-success);
-    font-size: 13px;
-    line-height: 1;
-    align-self: center;
-    margin-right: 1px;
-  }
+  color: var(--text-tertiary);
 }
 
 .metaDot {
-  color: var(--text-quaternary);
+  color: var(--text-tertiary);
   user-select: none;
 }
 
 .metaTotal {
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 .metaLoaded {
-  color: var(--viz-success);
+  color: var(--text-tertiary);
+}
+
+.eyeIcon {
+  margin-right: 8px;
+  vertical-align: -2px;
 }
 
 .metaMuted {

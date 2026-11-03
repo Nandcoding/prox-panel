@@ -84,7 +84,7 @@ const QUOTA_PREFERENCES_KEY = 'quotaPage.preferences';
 
 const DEFAULT_QUOTA_PREFERENCES: QuotaPreferences = {
   showEmails: false,
-  displayMode: 'used',
+  displayMode: 'remaining',
   viewMode: 'ledger',
   allViewMode: 'cards',
   forecastLookbackHours: 24,

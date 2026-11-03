@@ -31,7 +31,7 @@ import {
   IconSidebarSystem,
   IconChevronDown,
 } from '@/components/ui/icons';
-import { INLINE_LOGO_JPEG } from '@/assets/logoInline';
+import { ProxLogo } from '@/components/layout/ProxLogo';
 import {
   useAuthStore,
   useConfigStore,
@@ -349,8 +349,7 @@ export function MainLayout() {
   const themeMenuRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
 
-  const fullBrandName = 'CLI Proxy API Management Center';
-  const abbrBrandName = t('title.abbr');
+  const fullBrandName = 'prox · CLI Proxy API Management Center';
   const isLogsPage = location.pathname.startsWith('/logs');
   const isPluginResourcePage = location.pathname.startsWith('/plugin-pages');
   const showSidebarLabels = !sidebarCollapsed || sidebarOpen;
@@ -1151,24 +1150,22 @@ export function MainLayout() {
           className={`sidebar ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : ''}`}
         >
           <div className="sidebar-header">
-            <div className="sidebar-brand" title={fullBrandName}>
-              <img src={INLINE_LOGO_JPEG} alt="CPAMC logo" className="sidebar-brand-logo" />
+            <div className="sidebar-brand prox-brand" title={fullBrandName}>
+              <ProxLogo />
               {showSidebarLabels && (
                 <span className="sidebar-brand-text">
-                  <span className="sidebar-brand-title">{abbrBrandName}</span>
-                  <span className="sidebar-brand-subtitle">{t('sidebar.subtitle')}</span>
+                  <span className="sidebar-brand-title prox-brand-title">prox</span>
                 </span>
               )}
             </div>
           </div>
 
-          <div className="nav-section">
+          {/* prox: groups are separated by space only, without headings. */}
+          <div className="nav-section prox-nav">
             {navGroups.map((group, idx) => (
-              <div className="nav-group" key={group.id}>
-                {showSidebarLabels ? (
-                  <div className="nav-group-label">{t(group.labelKey)}</div>
-                ) : (
-                  idx > 0 && <div className="nav-group-divider" aria-hidden="true" />
+              <div className="nav-group" key={group.id} aria-label={t(group.labelKey)}>
+                {!showSidebarLabels && idx > 0 && (
+                  <div className="nav-group-divider" aria-hidden="true" />
                 )}
                 {group.items.map((item) => renderNavItem(item))}
               </div>
